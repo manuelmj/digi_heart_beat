@@ -1,0 +1,115 @@
+# ====================================
+# ⚙️  PYTHON / GENERAL
+# ====================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Entorno virtual local
+.venv/
+.venv*/
+.env/
+.env*/
+.virtualenv/
+.virtual-env/
+.venv.bak/
+
+# Archivos de configuración del entorno
+*.env
+*.env.local
+*.ini
+*.toml
+*.cfg
+*.yaml
+*.yml
+
+# ====================================
+# 🧰  DEPENDENCIAS Y COMPILADOS
+# ====================================
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+sdist/
+develop-eggs/
+pip-wheel-metadata/
+.installed.cfg
+MANIFEST
+
+# ====================================
+# 🧪  TESTING Y COVERAGE
+# ====================================
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.cache/
+
+# ====================================
+# 🧩  EDITORES Y ENTORNOS
+# ====================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*~
+
+# ====================================
+# 🧠  LOGS Y SALIDAS
+# ====================================
+logs/
+*.log
+*.out
+*.err
+
+# ====================================
+# 🐋  DOCKER / CONTENEDORES
+# ====================================
+# Archivos generados por contenedores o CI
+docker-compose.override.yml
+*.pid
+*.sock
+
+# ====================================
+# 🔐  SEGURIDAD / SECRETS
+# ====================================
+# Claves, certificados o credenciales locales
+*.pem
+*.crt
+*.key
+secrets/
+certs/
+private/
+config_local.json
+config_private.json
+
+# ====================================
+# ⚗️  PYINSTALLER / BINARIOS
+# ====================================
+*.manifest
+*.spec
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ====================================
+# 🧾  DOCUMENTACIÓN
+# ====================================
+docs/_build/
+site/
+notebooks/.ipynb_checkpoints/
+
+# ====================================
+# 🚀  MISC
+# ====================================
+.DS_Store
+Thumbs.db
+*.sqlite3
+__pypackages__/
