@@ -8,4 +8,7 @@ class StatusInterface(Enum):
 @dataclass
 class SystemStatus():
     external_server_status: StatusInterface
+
+    def is_system_up(self) -> bool:
+        return self.external_server_status == StatusInterface.UP
     

@@ -15,6 +15,7 @@ class SerialInterface():
 @dataclass
 class ServerType(Enum):
     TCP = "TCP"
+    RTU = "RTU"
     #agregar soporte en siguientes versiones para  udp, rtu, etc. 
 
 @dataclass
@@ -22,11 +23,23 @@ class Server():
     type: ServerType 
     ip: str = "127.0.0.1"
     port: int = 502
+    timeout: float = 5.0
 
+    def get_host(self) -> str:
+        return self.ip
+    def get_port(self) -> int:
+        return self.port
+    def get_timeout(self) -> float:
+        return self.timeout
+    def get_type(self) -> ServerType:
+        return self.type
 
 @dataclass
 class ServerInterface():
     servers: list[Server]
+
+    def get_servers(self) -> list[Server]:
+        return self.servers
 
 
 class DeviceInterfaces:
@@ -34,7 +47,7 @@ class DeviceInterfaces:
         self.name = name
         self.ethernet: Optional[EthernetInterface] = None
         self.serial: Optional[SerialInterface] = None
-        self.server: Optional[list[ServerInterface]] = None
+        self.server: Optional[ServerInterface] = None
 
     def get_ethernet_interface(self) -> Optional[EthernetInterface]:
         return self.ethernet
@@ -42,7 +55,7 @@ class DeviceInterfaces:
     def get_serial_interface(self) -> Optional[SerialInterface]:
         return self.serial
 
-    def get_server_interface(self) -> Optional[list[ServerInterface]]:
+    def get_server_interface(self) -> Optional[ServerInterface]:
         return self.server
 
 

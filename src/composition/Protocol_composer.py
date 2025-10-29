@@ -5,13 +5,12 @@ from infrastructure.models import DeviceInterfaces,Server, ServerType, DeviceInt
 from application.system_status_actor import SystemStatusActor
 
 from pykka import ActorRef
-
+from config.config_loader import ConfigLoader
 
 from application.protocol_actor import ProtocolActor
 from pykka import ActorRegistry
-import asyncio
-
-
+ 
+config = ConfigLoader.load_config()
 
 class ProtocolComposer:
     @staticmethod
@@ -39,9 +38,19 @@ class ProtocolComposer:
     @staticmethod
     def _get_interfaces()-> DeviceInterfaces:
         #construir las interfaces segun sea las configuraciones del proyecto
+        server_list: list = list()
         
-        server1 = Server(type=ServerType.TCP, ip="127.0.0.1", port=5020)
+        config_servers = ConfigLoader.get_enabled_servers(config)
+        for server in config_servers:
+            srv = Server(
+                type=ServerType.TCP if server.get_protocol() == "TCP" else ServerType.RTU,
+                ip=server.get_host(),
+                port=server.get_port(),
+                timeout=server.get_timeout()
+            )
+            server_list.append(srv)
+
         interfaces = DeviceInterfacesBuilder(name="ModbusDevice")\
-                    .with_server(servers=[server1])\
+                    .with_server(servers=server_list)\
                     .build()
         return interfaces

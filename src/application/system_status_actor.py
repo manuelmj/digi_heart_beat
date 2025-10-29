@@ -61,10 +61,22 @@ class SystemStatusActor(ThreadingActor):
         internal_counter = 0
         while self._running:
             try:
-                internal_counter += 1
+                time.sleep(self.interval)
                 # Obtener el estado actual
                 status = self.system_status_service.get_status()
                 _logger.debug(f"[{self.name}] Sending periodic status: {status}")
+                
+                if status.is_system_up():
+                    _logger.info(f"#"*20)
+                    _logger.info(f"[{self.name}] System is UP")
+                    _logger.info(f"#"*20)
+                else:
+                    _logger.info(f"#"*20)
+                    _logger.warning(f"[{self.name}] System is DOWN")
+                    _logger.info(f"#"*20)
+                    continue 
+
+                internal_counter += 1
 
                 read_result = self.target_actor_ref.ask(ProtocolRequestReadMessages(address=40001), timeout=10)
                 
@@ -87,4 +99,4 @@ class SystemStatusActor(ThreadingActor):
                 _logger.error(f"[{self.name}] Error sending status: {e}")
             
             finally:
-                time.sleep(self.interval)
+                time.sleep(self.interval * 2)
