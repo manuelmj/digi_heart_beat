@@ -26,6 +26,25 @@ class ServerConfig():
 
 
 @dataclass
+class ICMPConfig():
+    """Configuración de una IP ICMP individual"""
+    ip: str
+    timeout: int
+    enabled: bool
+    description: Optional[str]
+
+    def is_enabled(self) -> bool:
+        return self.enabled
+    def get_ip(self) -> str:
+        return self.ip
+    def get_timeout(self) -> int:
+        return self.timeout
+    def get_description(self) -> Optional[str]:
+        return self.description
+
+
+@dataclass
 class Config():
     """Configuración completa de la aplicación"""
     servers: List[ServerConfig]
+    icmp: List[ICMPConfig]

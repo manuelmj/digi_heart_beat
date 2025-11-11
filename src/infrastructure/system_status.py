@@ -2,6 +2,7 @@ from domain.models import SystemStatus, StatusInterface
 
 from domain.ports import SystemStatusPort
 import socket
+import os 
 
 from logger import Logger
 _logger = Logger().get_logger()
@@ -23,6 +24,7 @@ class SystemStatusAdapter(SystemStatusPort):
         "ethernet": (self.interfaces_to_check.get_ethernet_interface, self._check_ethernet_status),
         "serial": (self.interfaces_to_check.get_serial_interface, self._check_serial_status),
         "server": (self.interfaces_to_check.get_server_interface, self._check_server_status),
+        "icmp": (self.interfaces_to_check.get_icmp_interface, self._check_icmp_status),
         }
 
         results = {
@@ -73,3 +75,32 @@ class SystemStatusAdapter(SystemStatusPort):
         except Exception as e:
             _logger.error(f"Error checando estado Ethernet: {str(e)}")
             return False
+        
+    def _check_icmp_status(self) -> bool :
+        try:
+
+            icmp_interface = self.interfaces_to_check.get_icmp_interface()
+            if not icmp_interface:
+                _logger.warning("No hay interfaces ICMP definidas para chequear el estado.")
+                return False
+            for icmp_ip in icmp_interface.get_icmp_ips():
+                ip = icmp_ip.get_ip()
+                timeout = icmp_ip.get_timeout()
+
+                if self.ping(ip, timeout):
+                    _logger.info(f"✅ La IP {ip} responde al ping.")
+                else:
+                    _logger.error(f"❌ La IP {ip} no responde al ping.")
+                    return False
+            
+               
+            return True
+        except Exception as e:
+            _logger.error(f"Error checando estado ICMP: {str(e)}")
+            return False
+        
+
+    def ping(self,host, timeout):
+        """Ping más simple - 1 línea de código"""
+        cmd = f"ping -c 1 -W {timeout} {host} > /dev/null 2>&1"
+        return os.system(cmd) == 0

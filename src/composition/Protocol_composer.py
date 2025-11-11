@@ -1,7 +1,7 @@
 from infrastructure.modbus_server import ModbusServerAdapter
 from infrastructure.modbus_client import ModbusClientAdapter
 from infrastructure.system_status import SystemStatusAdapter
-from infrastructure.models import DeviceInterfaces,Server, ServerType, DeviceInterfacesBuilder
+from infrastructure.models import DeviceInterfaces,Server, ServerType, DeviceInterfacesBuilder,ICMPIp
 from application.system_status_actor import SystemStatusActor
 
 from pykka import ActorRef
@@ -39,8 +39,10 @@ class ProtocolComposer:
     def _get_interfaces()-> DeviceInterfaces:
         #construir las interfaces segun sea las configuraciones del proyecto
         server_list: list = list()
-        
+        icmp_list: list = list()
         config_servers = ConfigLoader.get_enabled_servers(config)
+        config_icmp_ips = ConfigLoader.get_enabled_icmp_ips(config)
+
         for server in config_servers:
             srv = Server(
                 type=ServerType.TCP if server.get_protocol() == "TCP" else ServerType.RTU,
@@ -50,7 +52,15 @@ class ProtocolComposer:
             )
             server_list.append(srv)
 
+        for icmp in config_icmp_ips:
+            icmp_srv = ICMPIp(
+                ip=icmp.get_ip(),
+                timeout=icmp.get_timeout()
+            )
+            icmp_list.append(icmp_srv)
+
         interfaces = DeviceInterfacesBuilder(name="ModbusDevice")\
                     .with_server(servers=server_list)\
+                    .with_icmp(icmp_ips=icmp_list)\
                     .build()
         return interfaces

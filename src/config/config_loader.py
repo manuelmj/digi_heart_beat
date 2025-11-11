@@ -1,7 +1,7 @@
 from ruamel.yaml import YAML
 from typing import List
 from pathlib import Path
-from config.models import Config, ServerConfig
+from config.models import Config, ServerConfig, ICMPConfig
 
 class ConfigLoader:
     """Cargador de configuración desde archivo YAML (usando ruamel.yaml)"""
@@ -19,6 +19,7 @@ class ConfigLoader:
             yaml = YAML(typ="safe")
             with open(absolute_path, 'r', encoding='utf-8') as file:
                 config_data = yaml.load(file)
+
             
             return Config(**config_data)
             
@@ -34,3 +35,13 @@ class ConfigLoader:
             return enabled_servers
         except Exception as e:
             raise ValueError(f"Error procesando servidores habilitados: {e}")   
+
+    @staticmethod
+    def get_enabled_icmp_ips(config: Config) -> List[ICMPConfig]:
+        """Obtiene solo las IPs ICMP habilitadas para el ambiente especificado"""   
+        try: 
+            icmp_ips = [ICMPConfig(**icmp) for icmp in config.icmp]
+            enabled_icmp_ips = [icmp for icmp in icmp_ips if icmp.is_enabled()]
+            return enabled_icmp_ips
+        except Exception as e:
+            raise ValueError(f"Error procesando IPs ICMP habilitadas: {e}")

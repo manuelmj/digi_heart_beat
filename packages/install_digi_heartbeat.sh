@@ -125,6 +125,8 @@ if [ $? -ne 0 ]; then
     exit 4
 fi
 
+chmod +x ${APP_MAIN_SCRIPT}
+
 echo "✅ ${APP_NAME} instalado correctamente en ${FINAL_PATH}."
 
 # ================================

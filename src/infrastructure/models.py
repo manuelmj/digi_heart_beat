@@ -42,12 +42,30 @@ class ServerInterface():
         return self.servers
 
 
+@dataclass
+class ICMPIp():
+    ip: str
+    timeout: float = 2.0
+
+    def get_ip(self) -> str:
+        return self.ip
+    def get_timeout(self) -> float:
+        return self.timeout
+
+@dataclass
+class ICMPInterface():
+    icmp : list[ICMPIp]
+
+    def get_icmp_ips(self) -> list[ICMPIp]:
+        return self.icmp    
+
 class DeviceInterfaces:
     def __init__(self, name: str):
         self.name = name
         self.ethernet: Optional[EthernetInterface] = None
         self.serial: Optional[SerialInterface] = None
         self.server: Optional[ServerInterface] = None
+        self.icmp: Optional[ICMPInterface] = None
 
     def get_ethernet_interface(self) -> Optional[EthernetInterface]:
         return self.ethernet
@@ -58,14 +76,16 @@ class DeviceInterfaces:
     def get_server_interface(self) -> Optional[ServerInterface]:
         return self.server
 
-
+    def get_icmp_interface(self) -> Optional[ICMPInterface]:
+        return self.icmp
 
     def __repr__(self):
         return (
             f"<DeviceInterfaces name={self.name}, "
             f"ethernet={self.ethernet}, "
             f"serial={self.serial}, "
-            f"server={self.server}>"
+            f"server={self.server}, "
+            f"icmp={self.icmp}>"
         )
 
 
@@ -87,9 +107,12 @@ class DeviceInterfacesBuilder:
         self.device.server = ServerInterface(servers=servers)
         return self
 
+    def with_icmp(self, icmp_ips: list[ICMPIp]):
+        self.device.icmp = ICMPInterface(icmp=icmp_ips)
+        return self
  
     def build(self) -> DeviceInterfaces:
-        if not any([self.device.ethernet, self.device.serial, self.device.server]):
+        if not any([self.device.ethernet, self.device.serial, self.device.server, self.device.icmp]):
             raise ValueError("Debe configurarse al menos una interfaz de comunicación")
                 
         return self.device
